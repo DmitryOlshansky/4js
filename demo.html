@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>4js</title>
+        <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+                color:yellow;
+            }
+            body {
+                background: blue;
+            }
+            .title {
+                font-size: 1.25rem;
+                top: 0.5rem;
+                position: fixed;
+            }
+            .container {
+                padding: 0 5% 0 5%;
+                height: 100%;
+            }
+            .terminal {
+                top: 1.5rem;
+                bottom: 4rem;
+                width: 90%;
+                background: white;
+                color: black;
+                position: fixed;
+                overflow: auto;
+            }
+            .prompt {
+                bottom: 3.5rem; 
+                position: fixed;
+            }
+            .console {
+                bottom: 2rem;
+                width: 90%;
+                position: fixed;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <form action='javascript:onInput()'>
+                <label class='title' for="terminal">4JS - Minimalist JavaScript Forth</label>
+                <pre class="terminal" id='terminal'></pre>
+                <label class='prompt' for='console'>Console</label>
+                <input class="console" id='console' type="text">
+            </form>
+        </div>
+    </body>
+    <script src="./4js.js"></script>
+    <script>
+        let screen = document.getElementById('terminal')
+        let input = document.getElementById('console')
+        // 640k objects should be enough for everyone
+        // f is a Forth 'task', everything but dictionary is local to this task
+        let f = forth(1024, 640*1024)
+        // embedding API - defining words from JS
+        define(".", (task) => screen.innerHTML += task.pop())
+        function onInput() {
+            let text = input.value
+            input.value = ''
+            if (text != "") {
+                try {
+                    f.run(text)
+                    screen.innerHTML += 'ok \n'
+                }
+                catch (error) {
+                    screen.innerHTML += error +"\n"
+                }
+                screen.scrollBy(0, 100)
+            }
+        }
+        input.focus()
+    </script>
+</html>
